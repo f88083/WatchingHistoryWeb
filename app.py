@@ -38,5 +38,22 @@ def add():
 
     return jsonify({'success': True, 'history': watching_history})
 
+# Route to delete an entry from the watching history
+@app.route('/delete', methods=['POST'])
+def delete():
+    index = int(request.form['index'])
+    
+    print(watching_history[index])
+    
+    # Remove the entry from the watching history
+    del watching_history[index]
+
+    # Save updated watching history to the JSON file
+    with open(JSON_FILE_PATH, 'w') as file:
+        json.dump(watching_history, file, indent=2)
+
+    return jsonify({'success': True, 'history': watching_history})
+
+
 if __name__ == '__main__':
     app.run(debug=True)
