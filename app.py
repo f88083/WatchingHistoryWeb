@@ -52,13 +52,25 @@ def index():
             db.session.commit()
             return redirect("/")
         except:
-            return "There was an issue adding your task"
+            return "There was an issue adding the history"
     else:
         # 獲取所有資料
         history = WatchingHistory.query.order_by(WatchingHistory.date_created).all()
         # 傳資料到index.html
         return render_template("index.html", history=history)
 
+@app.route('/delete/<int:id>')
+def delete(id):
+    # 從資料庫取得該task
+    history_to_delete = WatchingHistory.query.get_or_404(id)
 
+    try:
+        # 刪除該task
+        db.session.delete(history_to_delete)
+        db.session.commit()
+        return redirect('/')
+    except:
+        return 'There was an issue deleting the history'
+    
 if __name__ == "__main__":
     app.run(debug=True)
