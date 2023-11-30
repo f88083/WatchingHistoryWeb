@@ -10,27 +10,26 @@
         <tr>
             <th>Title</th>
             <th>Season</th>
-            <th>Value</th>
             <th>Episode</th>
             <th>Progress</th>
         </tr>
         {% for entry in history %}
         <tr>
             <td>{{ entry.title }}</td>
-            <td>{{ entry.season}}</td>
-            <td>{{ entry.value }}</td>
+            <td>第{{ entry.value }}{{ entry.season}}</td>
             <td>{{ entry.episode}}</td>
             <td>{{ entry.progress }}</td>
             <td>
-                <button onclick="editRow({{ loop.index0 }})">Edit</button>
-                <button onclick="deleteRow({{ loop.index0 }})">Delete</button>
+                <a href="">Delete</a>
+                <br>
+                <a href="">Update</a>
             </td>
         </tr>
         {% endfor %}
     </table>
 
     <h2>Add New Entry</h2>
-    <form id="addForm">
+    <form action="/" method="POST">
         <label for="title">Title:</label>
         <input type="text" name="title" required><br>
 
@@ -38,6 +37,7 @@
         <select name="season">
             <option value="季">季</option>
             <option value="卷">卷</option>
+            <option value="無">無</option>
         </select><br>
 
         <label for="value">Value:</label>
@@ -49,7 +49,7 @@
         <label for="progress">Progress:</label>
         <input type="text" name="progress" required><br>
 
-        <button type="button" onclick="addEntry()">Add Entry</button>
+        <input type="submit" value="新增">
     </form>
 
 {% endblock %}
