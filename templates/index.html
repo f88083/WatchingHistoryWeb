@@ -16,7 +16,11 @@
         {% for entry in history %}
         <tr>
             <td>{{ entry.title }}</td>
-            <td>第{{ entry.value }}{{ entry.season}}</td>
+            {% if entry.season != "無" %}
+                <td>第{{ entry.value }}{{ entry.season}}</td>
+            {% else %}
+                <td>無</td>
+            {% endif %}
             <td>{{ entry.episode}}</td>
             <td>{{ entry.progress }}</td>
             <td>
