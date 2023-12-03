@@ -71,6 +71,28 @@ def delete(id):
         return redirect('/')
     except:
         return 'There was an issue deleting the history'
-    
+
+@app.route('/update/<int:id>', methods=['GET', 'POST'])    
+def update(id):
+    # 從資料庫取得該history
+    history = WatchingHistory.query.get_or_404(id)
+
+    if request.method == 'POST':
+        # 取得用戶輸入的資料
+        history.title = request.form['title']
+        history.season = request.form['season']
+        history.value = request.form['value']
+        history.episode = request.form['episode']
+        history.progress = request.form['progress']
+        
+        try:
+            # 更新資料庫
+            db.session.commit()
+            return redirect('/')
+        except:
+            return 'There was an issue updating your history'
+    else:
+        return render_template('update.html', history=history)
+
 if __name__ == "__main__":
     app.run(debug=True)
