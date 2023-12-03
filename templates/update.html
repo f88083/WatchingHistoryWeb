@@ -13,7 +13,7 @@
             <input type="text" name="title" value="{{history.title}}" required><br>
 
             <label for="season">Season:</label>
-            <select name="season">
+            <select name="season" id="seasonSelect">
                 {% for season_option in ['季', '卷', '無'] %}
                     {% if history.season == season_option %}
                         <option value="{{ season_option }}" selected>{{ season_option }}</option>
@@ -23,8 +23,8 @@
                 {% endfor %}
             </select><br>
 
-            <label for="value">Value:</label>
-            <input type="number" name="value" value="{{history.value}}" required><br>
+            <label for="value" id="valueLabel">Value:</label>
+            <input type="number" name="value" value="{{history.value}}" id="valueInput" required><br>
 
             <label for="episode">Episode:</label>
             <input type="number" name="episode" value="{{history.episode}}" required><br>
@@ -35,4 +35,24 @@
             <input type="submit" value="更新">
         </form>
     </div>
+
+    <script>
+        const seasonSelect = document.getElementById('seasonSelect');
+        const valueLabel = document.getElementById('valueLabel');
+        const valueInput = document.getElementById('valueInput');
+        const episodeInput = document.getElementById('episodeInput');
+    
+        seasonSelect.addEventListener('change', function() {
+            if (seasonSelect.value === '無') {
+                valueLabel.style.visibility = 'hidden'; // Hide the label
+                valueInput.style.visibility = 'hidden'; // Hide the input
+            } else {
+                valueLabel.style.visibility = 'visible'; // Show the label
+                valueInput.style.visibility = 'visible'; // Show the input
+            }
+        });
+    
+        // Trigger the change event initially in case there's a default value selected
+        seasonSelect.dispatchEvent(new Event('change'));
+    </script>
 {% endblock %}

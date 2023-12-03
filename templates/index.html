@@ -38,22 +38,42 @@
         <input type="text" name="title" required><br>
 
         <label for="season">Season:</label>
-        <select name="season">
+        <select name="season" id="seasonSelect">
             <option value="季">季</option>
             <option value="卷">卷</option>
             <option value="無">無</option>
         </select><br>
 
-        <label for="value">Value:</label>
-        <input type="number" name="value" required><br>
+        <label for="value" id="valueLabel">Value:</label>
+        <input type="number" name="value" id="valueInput" value="0" required><br>
 
         <label for="episode">Episode:</label>
-        <input type="number" name="episode" required><br>
+        <input type="number" name="episode" id="episodeInput" required><br>
 
         <label for="progress">Progress:</label>
         <input type="text" name="progress" required><br>
 
         <input type="submit" value="新增">
     </form>
+
+    <script>
+        const seasonSelect = document.getElementById('seasonSelect');
+        const valueLabel = document.getElementById('valueLabel');
+        const valueInput = document.getElementById('valueInput');
+        const episodeInput = document.getElementById('episodeInput');
+    
+        seasonSelect.addEventListener('change', function() {
+            if (seasonSelect.value === '無') {
+                valueLabel.style.visibility = 'hidden'; // Hide the label
+                valueInput.style.visibility = 'hidden'; // Hide the input
+            } else {
+                valueLabel.style.visibility = 'visible'; // Show the label
+                valueInput.style.visibility = 'visible'; // Show the input
+            }
+        });
+    
+        // Trigger the change event initially in case there's a default value selected
+        seasonSelect.dispatchEvent(new Event('change'));
+    </script>
 
 {% endblock %}
