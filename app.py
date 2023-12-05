@@ -1,14 +1,57 @@
 from datetime import datetime
-from flask import Flask, redirect, render_template, request, jsonify
+from flask import Flask, flash, redirect, render_template, request, jsonify, url_for
 from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager, UserMixin, login_required, login_user, logout_user
+import click
+from werkzeug.security import generate_password_hash, check_password_hash
+
 
 # Init. the Flask app
 app = Flask(__name__)
 
 # Config. database
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///watching-history.db"
+# Config. secret key
+app.config['SECRET_KEY'] = 'dev' # FIXME: Should change to a random string when deploy
 # Init. database
 db = SQLAlchemy(app)
+
+# Instantiate login manager
+login_manager = LoginManager(app)
+
+@app.cli.command() # Register as command
+@click.option('--drop', is_flag=True, help='Create after drop.')
+# Configure the command for drop and create database
+def initdb(drop):
+    """Initialize the database."""
+    if drop:
+        db.drop_all()
+    db.create_all()
+    click.echo('Initialized database.')
+
+@app.cli.command()
+@click.option('--username', prompt=True, help='The username used to login.')
+@click.option('--password', prompt=True, hide_input=True, confirmation_prompt=True, help='The password used to login.')
+# Create a command to create an admin user
+def admin(username, password):
+    """Create user."""
+    db.create_all()
+    
+    user = User.query.first()
+
+    if user is not None:
+        click.echo('Updating user...')
+        user.username = username
+        user.set_password(password) # 设置密码
+    else:
+        click.echo('Creating user...')
+        user = User(username=username, name='Admin')
+        user.set_password(password) # 设置密码
+        db.session.add(user)
+    
+    db.session.commit() # 提交数据库会话
+    click.echo('Done.')
+
 
 
 # Create a model for database
@@ -24,6 +67,59 @@ class WatchingHistory(db.Model):
     # Return a string when create a new element
     def __repr__(self):
         return "<Watching History %r>" % self.id
+    
+# User class
+class User(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(20))
+    username = db.Column(db.String(20))
+    password_hash = db.Column(db.String(128)) # Hashed password
+
+    def set_password(self, password):
+        # Create hashed password
+        self.password_hash = generate_password_hash(password)
+
+    def validate_password(self, password):
+        # Validate password
+        return check_password_hash(self.password_hash, password)
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    # Return user object by searching on ID or None
+    return User.query.get(int(user_id))
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username'] # Get username from form
+        password = request.form['password'] # Get password from form
+
+        if not username or not password:
+            flash('Invalid username or password')
+            return redirect(url_for('login'))
+        
+        user = User.query.first()
+
+        if username == user.username and user.validate_password(password):
+            login_user(user)
+            flash('Login success')
+            return redirect(url_for('index'))
+        
+        # If username or password is wrong
+        flash('Invalid username or password')
+
+        # Back to login page
+        return redirect(url_for('login'))
+    
+    return render_template('login.html')
+
+@app.route('/logout')
+@login_required # Protect this route
+def logout():
+    logout_user()
+    flash('Logout success')
+    return redirect(url_for('index'))
 
 
 # Route to display the watching history
