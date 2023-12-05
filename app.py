@@ -39,17 +39,18 @@ def admin(username, password):
     
     user = User.query.first()
 
+    # Update the user if exists
     if user is not None:
         click.echo('Updating user...')
         user.username = username
-        user.set_password(password) # 设置密码
+        user.set_password(password)
     else:
         click.echo('Creating user...')
         user = User(username=username, name='Admin')
-        user.set_password(password) # 设置密码
+        user.set_password(password)
         db.session.add(user)
     
-    db.session.commit() # 提交数据库会话
+    db.session.commit()
     click.echo('Done.')
 
 
