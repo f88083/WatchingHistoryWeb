@@ -1,7 +1,7 @@
 from datetime import datetime
 from flask import Flask, flash, redirect, render_template, request, jsonify, url_for
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager, UserMixin, login_required, login_user, logout_user
+from flask_login import LoginManager, UserMixin, current_user, login_required, login_user, logout_user
 import click
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -126,6 +126,9 @@ def logout():
 @app.route("/", methods=["POST", "GET"])
 def index():
     if request.method == "POST":
+        # 檢查登入狀態
+        if not current_user.is_authenticated:
+            return redirect(url_for('login'))
         # 收到資料
         history_title = request.form["title"]
         history_season = request.form["season"]
@@ -150,12 +153,17 @@ def index():
         except:
             return "There was an issue adding the history"
     else:
+        # 檢查登入狀態
+        if not current_user.is_authenticated:
+            flash('Please login to see the history')
+            return redirect(url_for('login'))
         # 獲取所有資料
         history = WatchingHistory.query.order_by(WatchingHistory.date_created).all()
         # 傳資料到index.html
         return render_template("index.html", history=history)
 
 @app.route('/delete/<int:id>')
+@login_required
 def delete(id):
     # 從資料庫取得該task
     history_to_delete = WatchingHistory.query.get_or_404(id)
@@ -168,7 +176,8 @@ def delete(id):
     except:
         return 'There was an issue deleting the history'
 
-@app.route('/update/<int:id>', methods=['GET', 'POST'])    
+@app.route('/update/<int:id>', methods=['GET', 'POST'])
+@login_required    
 def update(id):
     # 從資料庫取得該history
     history = WatchingHistory.query.get_or_404(id)
