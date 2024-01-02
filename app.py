@@ -88,7 +88,7 @@ class User(db.Model, UserMixin):
 @login_manager.user_loader
 def load_user(user_id):
     # Return user object by searching on ID or None
-    return User.query.get(int(user_id))
+    return db.session.get(User, int(user_id))
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
