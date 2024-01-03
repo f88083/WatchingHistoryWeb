@@ -173,6 +173,7 @@ def delete(id):
         # 刪除該task
         db.session.delete(history_to_delete)
         db.session.commit()
+        flash('History deleted')
         return redirect('/')
     except:
         return 'There was an issue deleting the history'
@@ -194,6 +195,7 @@ def update(id):
         try:
             # 更新資料庫
             db.session.commit()
+            flash('History updated')
             return redirect('/')
         except:
             return 'There was an issue updating your history'
