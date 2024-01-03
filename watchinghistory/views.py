@@ -1,94 +1,8 @@
-from datetime import datetime
-from flask import Flask, flash, redirect, render_template, request, jsonify, url_for
-from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager, UserMixin, current_user, login_required, login_user, logout_user
-import click
-from werkzeug.security import generate_password_hash, check_password_hash
+from flask import render_template, request, url_for, redirect, flash
+from flask_login import login_user, login_required, logout_user, current_user
 
-
-# Init. the Flask app
-app = Flask(__name__)
-
-# Config. database
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///watching-history.db"
-# Config. secret key
-app.config['SECRET_KEY'] = 'dev' # FIXME: Should change to a random string when deploy
-# Init. database
-db = SQLAlchemy(app)
-
-# Instantiate login manager
-login_manager = LoginManager(app)
-
-@app.cli.command() # Register as command
-@click.option('--drop', is_flag=True, help='Create after drop.')
-# Configure the command for drop and create database
-def initdb(drop):
-    """Initialize the database."""
-    if drop:
-        db.drop_all()
-    db.create_all()
-    click.echo('Initialized database.')
-
-@app.cli.command()
-@click.option('--username', prompt=True, help='The username used to login.')
-@click.option('--password', prompt=True, hide_input=True, confirmation_prompt=True, help='The password used to login.')
-# Create a command to create an admin user
-def admin(username, password):
-    """Create user."""
-    db.create_all()
-    
-    user = User.query.first()
-
-    # Update the user if exists
-    if user is not None:
-        click.echo('Updating user...')
-        user.username = username
-        user.set_password(password)
-    else:
-        click.echo('Creating user...')
-        user = User(username=username, name='Admin')
-        user.set_password(password)
-        db.session.add(user)
-    
-    db.session.commit()
-    click.echo('Done.')
-
-
-
-# Create a model for database
-class WatchingHistory(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(200), nullable=False)
-    season = db.Column(db.String(10), nullable=False)
-    value = db.Column(db.Integer, nullable=False)
-    episode = db.Column(db.Integer, nullable=False)
-    progress = db.Column(db.String(10), nullable=False)
-    date_created = db.Column(db.DateTime, default=datetime.utcnow)
-
-    # Return a string when create a new element
-    def __repr__(self):
-        return "<Watching History %r>" % self.id
-    
-# User class
-class User(db.Model, UserMixin):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(20))
-    username = db.Column(db.String(20))
-    password_hash = db.Column(db.String(128)) # Hashed password
-
-    def set_password(self, password):
-        # Create hashed password
-        self.password_hash = generate_password_hash(password)
-
-    def validate_password(self, password):
-        # Validate password
-        return check_password_hash(self.password_hash, password)
-
-
-@login_manager.user_loader
-def load_user(user_id):
-    # Return user object by searching on ID or None
-    return db.session.get(User, int(user_id))
+from watchinghistory import app, db
+from watchinghistory.models import User, WatchingHistory
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -201,6 +115,3 @@ def update(id):
             return 'There was an issue updating your history'
     else:
         return render_template('update.html', history=history)
-
-if __name__ == "__main__":
-    app.run(debug=True)
