@@ -1,1 +1,1 @@
-FLASK_APP=watchinghistory
+FLASK_APP=main.py

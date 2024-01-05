@@ -1,10 +1,9 @@
-from flask import render_template, request, url_for, redirect, flash
+from flask import Blueprint, render_template, request, url_for, redirect, flash, current_app
 from flask_login import login_user, login_required, logout_user, current_user
+from ..models import User, WatchingHistory, db
+from . import main
 
-from watchinghistory import app, db
-from watchinghistory.models import User, WatchingHistory
-
-@app.route('/login', methods=['GET', 'POST'])
+@main.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         username = request.form['username'] # Get username from form
@@ -12,38 +11,38 @@ def login():
 
         if not username or not password:
             flash('Invalid username or password')
-            return redirect(url_for('login'))
+            return redirect(url_for('main.login'))
         
         user = User.query.first()
 
         if username == user.username and user.validate_password(password):
             login_user(user)
             flash('Login success')
-            return redirect(url_for('index'))
+            return redirect(url_for('main.index'))
         
         # If username or password is wrong
         flash('Invalid username or password')
 
         # Back to login page
-        return redirect(url_for('login'))
+        return redirect(url_for('main.login'))
     
     return render_template('login.html')
 
-@app.route('/logout')
+@main.route('/logout')
 @login_required # Protect this route
 def logout():
     logout_user()
     flash('Logout success')
-    return redirect(url_for('index'))
+    return redirect(url_for('main.index'))
 
 
 # Route to display the watching history
-@app.route("/", methods=["POST", "GET"])
+@main.route("/", methods=["POST", "GET"])
 def index():
     if request.method == "POST":
         # 檢查登入狀態
         if not current_user.is_authenticated:
-            return redirect(url_for('login'))
+            return redirect(url_for('main.login'))
         # 收到資料
         history_title = request.form["title"]
         history_season = request.form["season"]
@@ -71,13 +70,13 @@ def index():
         # 檢查登入狀態
         if not current_user.is_authenticated:
             flash('Please login to see the history')
-            return redirect(url_for('login'))
+            return redirect(url_for('main.login'))
         # 獲取所有資料
         history = WatchingHistory.query.order_by(WatchingHistory.date_created).all()
         # 傳資料到index.html
         return render_template("index.html", history=history)
 
-@app.route('/delete/<int:id>')
+@main.route('/delete/<int:id>')
 @login_required
 def delete(id):
     # 從資料庫取得該task
@@ -92,7 +91,7 @@ def delete(id):
     except:
         return 'There was an issue deleting the history'
 
-@app.route('/update/<int:id>', methods=['GET', 'POST'])
+@main.route('/update/<int:id>', methods=['GET', 'POST'])
 @login_required    
 def update(id):
     # 從資料庫取得該history

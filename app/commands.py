@@ -1,7 +1,9 @@
 import click
+from flask import Blueprint
 
-from watchinghistory import app, db
-from watchinghistory.models import User, WatchingHistory
+from .models import User, WatchingHistory, db
+
+app = Blueprint('view', __name__, url_prefix='/')
 
 @app.cli.command() # Register as command
 @click.option('--drop', is_flag=True, help='Create after drop.')
