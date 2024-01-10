@@ -3,7 +3,9 @@ from flask import Blueprint
 from . import main
 from .models import User, WatchingHistory, db
 
-@main.cli.command() # Register as command
+app = Blueprint('commands', __name__)
+
+@app.cli.command() # Register as command
 @click.option('--drop', is_flag=True, help='Create after drop.')
 # Configure the command for drop and create database
 def initdb(drop):
@@ -13,7 +15,7 @@ def initdb(drop):
     db.create_all()
     click.echo('Initialized database.')
 
-@main.cli.command()
+@app.cli.command()
 @click.option('--username', prompt=True, help='The username used to login.')
 @click.option('--password', prompt=True, hide_input=True, confirmation_prompt=True, help='The password used to login.')
 # Create a command to create an admin user

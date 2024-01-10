@@ -38,9 +38,13 @@ def create_app(config_name):
     from .main import main as main_blueprint
     app.register_blueprint(main_blueprint)
 
+    # Register CLI blueprint
+    from .commands import app as commands_blueprint
+    app.register_blueprint(commands_blueprint)
+
     return app
 
 # view = Blueprint('view', __name__)
 
 # 避免循環依賴
-# from . import views, errors, commands
+# from . import commands
