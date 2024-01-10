@@ -9,10 +9,10 @@ else:
     prefix = 'sqlite:////'
 
 def create_sqlite_uri(db_name):
-    return prefix + os.path.join(os.path.dirname(__file__), db_name)
+    return prefix + os.path.join(os.path.dirname(__file__), os.getenv('DATABASE_FILE', db_name))
 
 class BaseConfig(object):
-    SECRET_KEY = 'dev'
+    SECRET_KEY = os.getenv('SECRET_KEY', 'dev')
 
 class DevelopmentConfig(BaseConfig):
     DEBUG = False
