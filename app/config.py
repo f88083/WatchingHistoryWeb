@@ -16,6 +16,11 @@ class BaseConfig(object):
 
 class DevelopmentConfig(BaseConfig):
     DEBUG = False
+    SQLALCHEMY_DATABASE_URI = create_sqlite_uri('watching-history-dev.db')
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+class ProductionConfig(BaseConfig):
+    DEBUG = False
     SQLALCHEMY_DATABASE_URI = create_sqlite_uri('watching-history.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
@@ -26,5 +31,6 @@ class TestingConfig(BaseConfig):
 
 config = {
     'development': DevelopmentConfig,
+    'production': ProductionConfig,
     'testing': TestingConfig
 }
