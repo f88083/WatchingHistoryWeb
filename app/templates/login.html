@@ -5,13 +5,22 @@
 {% endblock %}
 
 {% block body %}
-<form method="post">
-    Username<br>
-    <input type="text" name="username" required><br><br>
-    Password<br>
-    <!-- 密码输入框的 type 属性使用 password，会将输入值显示为圆点 -->
-    <input type="password" name="password" required><br><br>
-    <input class="btn" type="submit" name="submit" value="Submit">
-</form>
+<div class="loginContainer">
+    <div class="loginform">
+        <h2 style="text-align: center;">Watching history</h2>
+        <form method="post">
+            <!-- Placeholder for animation to work -->
+            <div class="form-floating mb-3">
+                <input type="text" name="username" class="form-control" id="usernameInput" placeholder="username" required>
+                <label for="usernameInput" class="form-label">Username</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input type="password" name="password" class="form-control" id="passwordInput" placeholder="password" required>
+                <label for="passwordInput" class="form-label">Password</label>
+            </div>
 
+            <input class="btn btn-primary" type="submit" name="submit" value="Submit">
+        </form>
+    </div>
+</div>
 {% endblock %}
