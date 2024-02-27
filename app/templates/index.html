@@ -5,22 +5,26 @@
 {% endblock %}
 
 {% block body %}
-    <a href="/logout">Logout</a>
-    <h1 style="text-align: center;">Watching History</h1>
-    <table border="1" id="watching_history">
+<!-- <a href="/logout">Logout</a> -->
+<h1 style="text-align: center;">Watching History</h1>
+<table class="table table-striped table-hover table-bordered" border="1" id="watching_history">
+    <thead style="text-align: center;">
         <tr>
             <th>Title</th>
             <th>Season</th>
             <th>Episode</th>
             <th>Progress</th>
+            <th>Operation</th>
         </tr>
+    </thead>
+    <tbody class="table-group-divider">
         {% for entry in history %}
         <tr>
             <td>{{ entry.title }}</td>
             {% if entry.season != "無" %}
-                <td>第{{ entry.value }}{{ entry.season}}</td>
+            <td>第{{ entry.value }}{{ entry.season}}</td>
             {% else %}
-                <td>無</td>
+            <td>無</td>
             {% endif %}
             <td>{{ entry.episode}}</td>
             <td>{{ entry.progress }}</td>
@@ -31,50 +35,77 @@
             </td>
         </tr>
         {% endfor %}
-    </table>
+    </tbody>
+</table>
 
-    <h2>Add New Entry</h2>
+<br>
+
+<div class="new-entry-form">
+    <h2 style="padding: 5px;">Add New Entry</h2>
     <form action="/" method="POST">
-        <label for="title">Title:</label>
-        <input type="text" name="title" required><br>
+        <!-- <label for="title">Title:</label> -->
+        <div class="input-group mb-3">
+            <span class="input-group-text" id="new-entry-title">Title</span>
+            <input type="text" name="title" class="form-control" aria-label="Sizing example input"
+                aria-describedby="inputGroup-sizing-default" required><br>
+        </div>
 
-        <label for="season">Season:</label>
-        <select name="season" id="seasonSelect">
-            <option value="季">季</option>
-            <option value="卷">卷</option>
-            <option value="無">無</option>
-        </select><br>
+        <div class="dropdown">
+            <select name="season" class="form-select" id="seasonSelect">
+                <option value="季">季</option>
+                <option value="卷">卷</option>
+                <option value="無">無</option>
+            </select><br>
+        </div>
 
-        <label for="value" id="valueLabel">Value:</label>
-        <input type="number" name="value" id="valueInput" value="0" required><br>
+        <div class="input-group mb-3">
+            <span class="input-group-text" id="new-entry-value">Value</span>
+            <input type="number" name="value" id="valueInput" value="0" class="form-control" aria-label="Sizing example input"
+            aria-describedby="inputGroup-sizing-default" required><br>
+        </div>
 
-        <label for="episode">Episode:</label>
-        <input type="number" name="episode" id="episodeInput" required><br>
+        <div class="input-group mb-3">
+            <span class="input-group-text" id="new-entry-episode">Episode</span>
+            <input type="number" name="episode" id="episodeInput" class="form-control" aria-label="Sizing example input"
+            aria-describedby="inputGroup-sizing-default" required><br>
+        </div>
+        
+        <div class="input-group mb-3">
+            <span class="input-group-text" id="new-entry-progress">Progress</span>
+            <input type="text" name="progress" class="form-control" aria-label="Sizing example input"
+            aria-describedby="inputGroup-sizing-default" required><br>
+        </div>
 
-        <label for="progress">Progress:</label>
-        <input type="text" name="progress" required><br>
-
-        <input type="submit" value="新增">
+        <button type="submit" class="btn btn-success mb-3">新增</button>
     </form>
+</div>
 
-    <script>
-        const seasonSelect = document.getElementById('seasonSelect');
-        const valueLabel = document.getElementById('valueLabel');
-        const valueInput = document.getElementById('valueInput');
-        const episodeInput = document.getElementById('episodeInput');
-    
-        seasonSelect.addEventListener('change', function() {
-            if (seasonSelect.value === '無') {
-                valueLabel.style.visibility = 'hidden'; // Hide the label
-                valueInput.style.visibility = 'hidden'; // Hide the input
-            } else {
-                valueLabel.style.visibility = 'visible'; // Show the label
-                valueInput.style.visibility = 'visible'; // Show the input
-            }
-        });
-    
-        // Trigger the change event initially in case there's a default value selected
-        seasonSelect.dispatchEvent(new Event('change'));
-    </script>
+<button onclick="window.location.href='/logout'" class="button-82-pushable" role="button">
+    <span class="button-82-shadow"></span>
+    <span class="button-82-edge"></span>
+    <span class="button-82-front text">
+        Logout
+    </span>
+</button>
+
+<script>
+    const seasonSelect = document.getElementById('seasonSelect');
+    const valueLabel = document.getElementById('new-entry-value');
+    const valueInput = document.getElementById('valueInput');
+    const episodeInput = document.getElementById('episodeInput');
+
+    seasonSelect.addEventListener('change', function () {
+        if (seasonSelect.value === '無') {
+            valueLabel.style.visibility = 'hidden'; // Hide the label
+            valueInput.style.visibility = 'hidden'; // Hide the input
+        } else {
+            valueLabel.style.visibility = 'visible'; // Show the label
+            valueInput.style.visibility = 'visible'; // Show the input
+        }
+    });
+
+    // Trigger the change event initially in case there's a default value selected
+    seasonSelect.dispatchEvent(new Event('change'));
+</script>
 
 {% endblock %}
