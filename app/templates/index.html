@@ -29,9 +29,8 @@
             <td>{{ entry.episode}}</td>
             <td>{{ entry.progress }}</td>
             <td>
-                <a href="/delete/{{entry.id}}">Delete</a>
-                <br>
-                <a href="/update/{{entry.id}}">Update</a>
+                <a href="/update/{{entry.id}}" class="btn btn-success mb-3">Update</a>
+                <a href="/delete/{{entry.id}}" class="btn btn-danger mb-3">Delete</a>
             </td>
         </tr>
         {% endfor %}
