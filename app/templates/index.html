@@ -30,7 +30,8 @@
             <td>{{ entry.progress }}</td>
             <td>
                 <a href="/update/{{entry.id}}" class="btn btn-success mb-3">Update</a>
-                <a href="/delete/{{entry.id}}" class="btn btn-danger mb-3">Delete</a>
+                <a href="/delete/{{entry.id}}" class="btn btn-danger mb-3"
+                    onclick="return confirm('Are you sure you want to delete this history?')">Delete</a>
             </td>
         </tr>
         {% endfor %}
@@ -59,20 +60,20 @@
 
         <div class="input-group mb-3">
             <span class="input-group-text" id="new-entry-value">Value</span>
-            <input type="number" name="value" id="valueInput" value="0" class="form-control" aria-label="Sizing example input"
-            aria-describedby="inputGroup-sizing-default" required><br>
+            <input type="number" name="value" id="valueInput" value="0" class="form-control"
+                aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" required><br>
         </div>
 
         <div class="input-group mb-3">
             <span class="input-group-text" id="new-entry-episode">Episode</span>
             <input type="number" name="episode" id="episodeInput" class="form-control" aria-label="Sizing example input"
-            aria-describedby="inputGroup-sizing-default" required><br>
+                aria-describedby="inputGroup-sizing-default" required><br>
         </div>
-        
+
         <div class="input-group mb-3">
             <span class="input-group-text" id="new-entry-progress">Progress</span>
             <input type="text" name="progress" class="form-control" aria-label="Sizing example input"
-            aria-describedby="inputGroup-sizing-default" required><br>
+                aria-describedby="inputGroup-sizing-default" required><br>
         </div>
 
         <button type="submit" class="btn btn-success mb-3">新增</button>
