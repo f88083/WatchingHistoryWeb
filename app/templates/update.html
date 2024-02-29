@@ -5,54 +5,73 @@
 {% endblock %}
 
 {% block body %}
+<div class="new-entry-form" style="margin-top: 20px;">
     <h1 style="text-align: center;">Updating History</h1>
 
     <div class="form">
         <form action="/update/{{history.id}}" method="POST">
-            <label for="title">Title:</label>
-            <input type="text" name="title" value="{{history.title}}" required><br>
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="new-entry-title">Title</span>
+                <input type="text" name="title" value="{{history.title}}" class="form-control"
+                    aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" required>
+            </div>
 
-            <label for="season">Season:</label>
-            <select name="season" id="seasonSelect">
-                {% for season_option in ['季', '卷', '無'] %}
+            <div class="dropdown">
+                <select name="season" id="seasonSelect" class="form-select">
+                    {% for season_option in ['季', '卷', '無'] %}
                     {% if history.season == season_option %}
-                        <option value="{{ season_option }}" selected>{{ season_option }}</option>
+                    <option value="{{ season_option }}" selected>{{ season_option }}</option>
                     {% else %}
-                        <option value="{{ season_option }}">{{ season_option }}</option>
+                    <option value="{{ season_option }}">{{ season_option }}</option>
                     {% endif %}
-                {% endfor %}
-            </select><br>
+                    {% endfor %}
+                </select>
+                <br>
+            </div>
 
-            <label for="value" id="valueLabel">Value:</label>
-            <input type="number" name="value" value="{{history.value}}" id="valueInput" required><br>
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="new-entry-value">Value</span>
+                <input type="number" name="value" value="{{history.value}}" id="valueInput" class="form-control"
+                    aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" required><br>
+            </div>
 
-            <label for="episode">Episode:</label>
-            <input type="number" name="episode" value="{{history.episode}}" required><br>
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="new-entry-episode">Episode</span>
+                <input type="number" name="episode" id="episodeInput" class="form-control" value="{{history.episode}}"
+                    aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" required><br>
+            </div>
 
-            <label for="progress">Progress:</label>
-            <input type="text" name="progress" value="{{history.progress}}" required><br>
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="new-entry-progress">Progress</span>
+                <input type="text" name="progress" class="form-control" value="{{history.progress}}"
+                    aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" required><br>
+            </div>
 
-            <input type="submit" value="更新">
+            <div style="display: flex; justify-content: space-between;">
+                <button type="submit" class="btn btn-success mb-3">更新</button>
+                <a href="/" class="btn btn-danger mb-3" onclick="return confirm('Discard changes?')">取消</a>
+            </div>
         </form>
     </div>
+</div>
 
-    <script>
-        const seasonSelect = document.getElementById('seasonSelect');
-        const valueLabel = document.getElementById('valueLabel');
-        const valueInput = document.getElementById('valueInput');
-        const episodeInput = document.getElementById('episodeInput');
-    
-        seasonSelect.addEventListener('change', function() {
-            if (seasonSelect.value === '無') {
-                valueLabel.style.visibility = 'hidden'; // Hide the label
-                valueInput.style.visibility = 'hidden'; // Hide the input
-            } else {
-                valueLabel.style.visibility = 'visible'; // Show the label
-                valueInput.style.visibility = 'visible'; // Show the input
-            }
-        });
-    
-        // Trigger the change event initially in case there's a default value selected
-        seasonSelect.dispatchEvent(new Event('change'));
-    </script>
+<script>
+    const seasonSelect = document.getElementById('seasonSelect');
+    const valueLabel = document.getElementById('new-entry-value');
+    const valueInput = document.getElementById('valueInput');
+    const episodeInput = document.getElementById('episodeInput');
+
+    seasonSelect.addEventListener('change', function () {
+        if (seasonSelect.value === '無') {
+            valueLabel.style.visibility = 'hidden'; // Hide the label
+            valueInput.style.visibility = 'hidden'; // Hide the input
+        } else {
+            valueLabel.style.visibility = 'visible'; // Show the label
+            valueInput.style.visibility = 'visible'; // Show the input
+        }
+    });
+
+    // Trigger the change event initially in case there's a default value selected
+    seasonSelect.dispatchEvent(new Event('change'));
+</script>
 {% endblock %}
